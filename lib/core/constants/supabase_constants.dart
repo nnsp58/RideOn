@@ -17,4 +17,8 @@ class SupabaseConstants {
   // Storage buckets
   static const String profilePhotosBucket = 'profile-photos';
   static const String documentsBucket = 'user-documents';
+  static const String appUpdatesBucket = 'app-updates';
+
+  // App update URL (GitHub - V1.0.4)
+  static const String appUpdateBaseUrl = 'https://github.com/nnsp58/RideOn/releases/download/V1.0.4/RideOn-v1.0.4-Final.apk';
 }
