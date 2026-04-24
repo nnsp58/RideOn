@@ -1,5 +1,6 @@
 name: rideon
 description: RideOn - Car Pooling App
+version: 1.0.4+4
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -52,6 +53,7 @@ dependencies:
   url_launcher: ^6.3.1
   share_plus: ^10.1.0
   flutter_dotenv: ^6.0.0
+  package_info_plus: ^9.0.1
   flutter_map_cancellable_tile_provider: ^3.0.2
   flutter_map_cache: ^2.0.0+1
 
