@@ -102,23 +102,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
 
   Future<void> _showUpdateDialog() async {
     final prefs = await SharedPreferences.getInstance();
-    final lastSkippedVersion = prefs.getString('skipped_version');
     final lastCheckTime = prefs.getString('last_update_check');
 
     final now = DateTime.now();
     final lastCheck = lastCheckTime != null ? DateTime.tryParse(lastCheckTime) : null;
-    final shouldCheck = lastCheck == null || now.difference(lastCheck).inHours >= 24;
-
-    if (appVersionCode > 0 && (lastSkippedVersion != appVersion || shouldCheck)) {
-      final updateInfo = AppUpdateInfo(
-        version: '1.0.$appVersionCode',
-        versionCode: appVersionCode,
-        downloadUrl: SupabaseConstants.appUpdateBaseUrl,
-        releaseNotes: 'Download latest version for new features and bug fixes.',
-        isRequired: false,
-      );
-
-      if (mounted) {
+    
+    // Check every 24 hours
+    if (lastCheck == null || now.difference(lastCheck).inHours >= 24) {
+      final updateInfo = await AppUpdateService.instance.checkForUpdate();
+      
+      if (updateInfo != null && mounted) {
         await AppUpdateDialog.show(
           context,
           updateInfo: updateInfo,
