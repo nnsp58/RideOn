@@ -14,6 +14,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../services/map_service.dart';
 import '../../providers/ride_provider.dart';
+import '../../providers/chat_provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/utils/cached_tile_provider.dart';
 
 class BookingDetailScreen extends ConsumerStatefulWidget {
