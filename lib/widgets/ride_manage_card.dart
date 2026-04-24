@@ -18,29 +18,27 @@ class RideManageCard extends StatelessWidget {
     final dateFormat = DateFormat('EEE, d MMM • hh:mm a');
 
     Color statusColor;
-    String statusText = ride.status.toUpperCase();
+    String statusText = ride.computedStatus.toUpperCase();
     bool isPast = ride.isInPast;
 
-    if (isPast && ride.status == 'active') {
-      statusColor = AppColors.textSecondary;
-      statusText = 'PAST / DEPARTED';
-    } else {
-      switch (ride.status.toLowerCase()) {
-        case 'active':
-          statusColor = AppColors.success;
-          break;
-        case 'full':
-          statusColor = AppColors.secondary;
-          break;
-        case 'cancelled':
-          statusColor = AppColors.error;
-          break;
-        case 'completed':
-          statusColor = AppColors.primary;
-          break;
-        default:
-          statusColor = AppColors.textSecondary;
-      }
+    switch (ride.computedStatus.toLowerCase()) {
+      case 'active':
+        statusColor = AppColors.success;
+        break;
+      case 'full':
+        statusColor = AppColors.secondary;
+        break;
+      case 'cancelled':
+        statusColor = AppColors.error;
+        break;
+      case 'completed':
+        statusColor = AppColors.primary;
+        break;
+      case 'ongoing':
+        statusColor = Colors.blue;
+        break;
+      default:
+        statusColor = AppColors.textSecondary;
     }
 
     return Opacity(

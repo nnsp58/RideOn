@@ -54,8 +54,24 @@ class RideModel with _$RideModel {
 
   bool get isActive => status == 'active';
   bool get isFull => availableSeats == 0;
-  bool get isCompleted => status == 'completed';
+  bool get isCompleted => status == 'completed' || _isActuallyOver;
   bool get isCancelled => status == 'cancelled';
+
+  bool get _isActuallyOver {
+    // If it's already marked as completed/cancelled, no need to check time
+    if (status == 'completed' || status == 'cancelled') return false;
+    
+    // Safety check: if departure is more than 24 hours ago, it's definitely over
+    // or if duration is known, use that.
+    final arrivalTime = departureDatetime.add(Duration(minutes: durationMins ?? 120)); // Default 2h if unknown
+    return DateTime.now().isAfter(arrivalTime);
+  }
+
+  String get computedStatus {
+    if (isCancelled) return 'cancelled';
+    if (isCompleted) return 'completed';
+    return status;
+  }
 
   String get formattedPrice => '₹${(segmentPrice ?? pricePerSeat).toStringAsFixed(0)}';
 

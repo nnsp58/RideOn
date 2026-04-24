@@ -77,17 +77,17 @@ class RidePassengersScreen extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _getStatusColor(ride.status).withValues(alpha: 0.1),
+                            color: _getStatusColor(ride.computedStatus).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            ride.status.toUpperCase(),
-                            style: TextStyle(color: _getStatusColor(ride.status), fontWeight: FontWeight.bold, fontSize: 12),
+                            ride.computedStatus.toUpperCase(),
+                            style: TextStyle(color: _getStatusColor(ride.computedStatus), fontWeight: FontWeight.bold, fontSize: 12),
                           ),
                         ),
                       ],
                     ),
-                    if (ride.status == 'active' || ride.status == 'full') ...[
+                    if (ride.computedStatus == 'active' || ride.computedStatus == 'full') ...[
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -125,7 +125,7 @@ class RidePassengersScreen extends ConsumerWidget {
                           style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.red)),
                         ),
                       ),
-                    ] else if (ride.status == 'completed' || ride.status == 'cancelled' || ride.isInPast) ...[
+                    ] else if (ride.computedStatus == 'completed' || ride.computedStatus == 'cancelled' || ride.isInPast) ...[
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,
@@ -140,7 +140,7 @@ class RidePassengersScreen extends ConsumerWidget {
                         ),
                       ),
                     ],
-                    if (ride.status == 'ongoing') ...[
+                    if (ride.computedStatus == 'ongoing') ...[
                       const SizedBox(height: 16),
                       Container(
                         padding: const EdgeInsets.all(12),

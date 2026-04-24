@@ -34,10 +34,10 @@ class MyRidesScreen extends ConsumerWidget {
         body: ridesAsync.when(
           data: (rides) {
             final active = rides
-                .where((r) => !r.isInPast && (r.status == 'active' || r.status == 'full'))
+                .where((r) => r.computedStatus == 'active' || r.computedStatus == 'full' || r.computedStatus == 'ongoing')
                 .toList();
             final past = rides
-                .where((r) => r.isInPast || r.status == 'completed' || r.status == 'cancelled' || r.status == 'ongoing')
+                .where((r) => r.computedStatus == 'completed' || r.computedStatus == 'cancelled')
                 .toList();
 
             return TabBarView(
@@ -71,7 +71,7 @@ class MyRidesScreen extends ConsumerWidget {
       int booked = r.totalSeats - r.availableSeats;
       return sum + (r.pricePerSeat * booked);
     });
-    int completedRides = rides.where((r) => r.status == 'completed').length;
+    int completedRides = rides.where((r) => r.computedStatus == 'completed').length;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
