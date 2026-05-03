@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'notification_service.dart';
 
 class AppUpdateInfo {
   final String version;
@@ -159,6 +160,45 @@ Download: $downloadUrl
         break;
       default:
         await Share.share(text);
+    }
+  }
+
+  /// Send app update notification to all users
+  static Future<void> sendUpdateNotification({
+    required AppUpdateInfo updateInfo,
+  }) async {
+    try {
+      // Get all users with FCM tokens
+      final users = await Supabase.instance.client
+          .from('users')
+          .select('fcm_token')
+          .not('fcm_token', 'is', null);
+
+      List<String> playerIds = [];
+      for (final user in users) {
+        if (user['fcm_token'] != null) {
+          playerIds.add(user['fcm_token']);
+        }
+      }
+
+      if (playerIds.isNotEmpty) {
+        await NotificationService.sendPushNotification(
+          playerIds: playerIds,
+          title: '🔄 RideOn Update Available!',
+          message: 'Version ${updateInfo.version} is now available with new features and improvements',
+          additionalData: {
+            'type': 'app_update',
+            'version': updateInfo.version,
+            'version_code': updateInfo.versionCode.toString(),
+            'download_url': updateInfo.downloadUrl,
+            'release_notes': updateInfo.releaseNotes,
+            'is_required': updateInfo.isRequired.toString(),
+            'screen': 'app_update',
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint('Error sending update notification: $e');
     }
   }
 }

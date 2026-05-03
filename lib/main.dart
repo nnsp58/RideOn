@@ -8,6 +8,7 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'app.dart';
 import 'services/supabase_service.dart';
+import 'services/notification_service.dart';
 
 // ✅ FIX: Supabase ab main() mein initialize hota hai — build() se pehle.
 void main() async {
@@ -46,6 +47,13 @@ void main() async {
   } catch (e) {
     debugPrint('Supabase initialization failed: $e');
     // App fir bhi start hogi — screens apni error states handle karti hain
+  }
+
+  // Initialize OneSignal for push notifications
+  try {
+    await NotificationService.initializeOneSignal();
+  } catch (e) {
+    debugPrint('OneSignal initialization failed: $e');
   }
 
   runApp(

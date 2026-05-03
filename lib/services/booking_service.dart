@@ -69,13 +69,14 @@ class BookingService {
     try {
       final response = await SupabaseService.client
           .from('bookings')
-          .select('*, rides(from_location, to_location, departure_datetime), users!passenger_id(bio, photo_url, email)')
+          .select('*, rides(from_location, to_location, departure_datetime), users!passenger_id(bio, photo_url, email), driver:users!driver_id(phone, photo_url)')
           .eq('passenger_id', passengerId)
           .order('booked_at', ascending: false);
 
       return (response as List).map((json) {
         final ride = json['rides'];
         final passenger = json['users'];
+        final driver = json['driver'];
         return BookingModel.fromJson(json).copyWith(
           rideFrom: ride?['from_location'],
           rideTo: ride?['to_location'],
@@ -83,6 +84,8 @@ class BookingService {
           passengerBio: passenger?['bio'],
           passengerPhotoUrl: passenger?['photo_url'],
           passengerEmail: passenger?['email'],
+          driverPhone: driver?['phone'],
+          driverPhotoUrl: driver?['photo_url'],
         );
       }).toList();
     } catch (e) {
@@ -96,13 +99,14 @@ class BookingService {
     try {
       final response = await SupabaseService.client
           .from('bookings')
-          .select('*, rides(from_location, to_location, departure_datetime), users!passenger_id(bio, photo_url, email)')
+          .select('*, rides(from_location, to_location, departure_datetime), users!passenger_id(bio, photo_url, email, phone), driver:users!driver_id(phone, photo_url)')
           .eq('ride_id', rideId)
           .order('booked_at', ascending: false);
 
       return (response as List).map((json) {
         final ride = json['rides'];
         final passenger = json['users'];
+        final driver = json['driver'];
         return BookingModel.fromJson(json).copyWith(
           rideFrom: ride?['from_location'],
           rideTo: ride?['to_location'],
@@ -110,6 +114,9 @@ class BookingService {
           passengerBio: passenger?['bio'],
           passengerPhotoUrl: passenger?['photo_url'],
           passengerEmail: passenger?['email'],
+          passengerPhone: json['passenger_phone'] ?? passenger?['phone'],
+          driverPhone: driver?['phone'],
+          driverPhotoUrl: driver?['photo_url'],
         );
       }).toList();
     } catch (e) {
@@ -145,7 +152,7 @@ class BookingService {
     try {
       final response = await SupabaseService.client
           .from('bookings')
-          .select('*, rides(from_location, to_location, departure_datetime), users!passenger_id(bio, photo_url, email)')
+          .select('*, rides(from_location, to_location, departure_datetime), users!passenger_id(bio, photo_url, email), driver:users!driver_id(phone, photo_url)')
           .eq('id', bookingId)
           .maybeSingle();
 
@@ -153,6 +160,7 @@ class BookingService {
       
       final ride = response['rides'];
       final passenger = response['users'];
+      final driver = response['driver'];
       return BookingModel.fromJson(response).copyWith(
         rideFrom: ride?['from_location'],
         rideTo: ride?['to_location'],
@@ -160,6 +168,8 @@ class BookingService {
         passengerBio: passenger?['bio'],
         passengerPhotoUrl: passenger?['photo_url'],
         passengerEmail: passenger?['email'],
+        driverPhone: driver?['phone'],
+        driverPhotoUrl: driver?['photo_url'],
       );
     } catch (e) {
       throw Exception('Failed to get booking: $e');

@@ -1,6 +1,7 @@
 import '../models/sos_alert_model.dart';
 import '../core/constants/supabase_constants.dart';
 import 'supabase_service.dart';
+import 'notification_service.dart';
 
 class SOSService {
   /// Trigger SOS alert
@@ -31,8 +32,15 @@ class SOSService {
 
       final alertId = response['id'] as String;
 
-      // TODO: Send notifications to nearby authorities and emergency contacts
-      // TODO: Trigger push notifications to admin users
+      // Send push notifications to admin users
+      await _sendSOSNotifications(
+        userName: userName,
+        latitude: latitude,
+        longitude: longitude,
+        locationName: locationName,
+        emergencyType: emergencyType ?? 'general',
+        alertId: alertId,
+      );
 
       return alertId;
     } catch (e) {
@@ -117,6 +125,51 @@ class SOSService {
       return response != null ? SOSAlertModel.fromJson(response) : null;
     } catch (e) {
       throw Exception('Failed to get alert: $e');
+    }
+  }
+
+  /// Send SOS notifications to admin users
+  static Future<void> _sendSOSNotifications({
+    required String userName,
+    required double latitude,
+    required double longitude,
+    String? locationName,
+    required String emergencyType,
+    required String alertId,
+  }) async {
+    try {
+      // Get all admin users with FCM tokens
+      final admins = await SupabaseService.client
+          .from('users')
+          .select('id, fcm_token')
+          .eq('role', 'admin');
+
+      List<String> playerIds = [];
+      for (final admin in admins) {
+        if (admin['fcm_token'] != null) {
+          playerIds.add(admin['fcm_token']);
+        }
+      }
+
+      if (playerIds.isNotEmpty) {
+        await NotificationService.sendPushNotification(
+          playerIds: playerIds,
+          title: '🚨 EMERGENCY: SOS Alert!',
+          message: '$userName triggered SOS at $locationName ($latitude, $longitude). Type: $emergencyType',
+          additionalData: {
+            'type': 'sos_alert',
+            'user_name': userName,
+            'latitude': latitude.toString(),
+            'longitude': longitude.toString(),
+            'location_name': locationName ?? '',
+            'emergency_type': emergencyType,
+            'alert_id': alertId,
+            'screen': 'sos_monitoring',
+          },
+        );
+      }
+    } catch (e) {
+      print('Error sending SOS notifications: $e');
     }
   }
 }

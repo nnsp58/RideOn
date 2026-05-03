@@ -1,7 +1,7 @@
 class AppStrings {
   // App Info
-  static const String appName = 'RideOn';
-  static const String tagline = 'Saath chalein, saath bachayein';
+  static const String appName = 'CarMate';
+  static const String tagline = 'Eco-friendly carpooling';
 
   // Navigation
   static const String home = 'Home';

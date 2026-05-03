@@ -58,6 +58,10 @@ class AuthActions {
     );
   }
 
+  Future<void> signInWithFacebook() async {
+    await AuthService.signInWithFacebook();
+  }
+
   Future<void> signInWithOTP({
     required String phone,
     required Function(String) onCodeSent,

@@ -136,8 +136,7 @@ class MapService {
           final r = routes[i];
           final List coords = r['geometry']['coordinates'];
           
-          // FORCE START AND END COORDINATES TO BE THE USER'S PIN
-          // Prepending 'start' and appending 'end' ensures visual connection
+          // Set start and end coordinates for user's PIN selection
           final List<LatLng> points = coords
               .map((c) => LatLng(c[1].toDouble(), c[0].toDouble()))
               .toList();

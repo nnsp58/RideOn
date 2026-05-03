@@ -8,6 +8,8 @@ import '../../services/supabase_service.dart';
 import '../../services/app_update_service.dart';
 import '../../widgets/app_update_dialog.dart';
 import '../../core/constants/supabase_constants.dart';
+import '../../core/constants/app_strings.dart';
+import '../../core/constants/app_colors.dart';
 
 const String appVersion = '1.0.4';
 const int appVersionCode = 4;
@@ -186,11 +188,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF6200EA), // Single color background for smooth feel during animation
+      backgroundColor: AppColors.primaryVariant, // Single color background for smooth feel during animation
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3700B3), Color(0xFF6200EA)],
+            colors: [AppColors.primary, AppColors.primaryVariant],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -224,7 +226,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(35),
                           child: Image.asset(
-                            'assets/images/ride_together_icon.png',
+                            'assets/images/carmate_logo.png',
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -241,9 +243,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                       opacity: _fadeAnimation,
                       child: Column(
                         children: [
-                          const Text(
-                            'RideOn',
-                            style: TextStyle(
+                          Text(
+                            AppStrings.appName,
+                            style: const TextStyle(
                               fontSize: 52,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -251,9 +253,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                             ),
                           ),
                           const SizedBox(height: 12),
-                          const Text(
-                            'Saath chalein, saath bachayein',
-                            style: TextStyle(
+                          Text(
+                            AppStrings.tagline,
+                            style: const TextStyle(
                               fontSize: 20,
                               color: Colors.white70,
                               fontWeight: FontWeight.w400,

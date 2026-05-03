@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import '../models/ride_model.dart';
 import 'supabase_service.dart';
+import 'notification_service.dart';
 
 class RideService {
   /// Search rides based on criteria
@@ -43,7 +44,6 @@ class RideService {
           allRides.add(RideModel.fromJson(json));
         } catch (e) {
           debugPrint('Error parsing ride JSON: $e');
-          // In development, you might want to see the JSON
           debugPrint('Malformed JSON: $json');
         }
       }
@@ -301,6 +301,14 @@ class RideService {
     String? reason,
   }) async {
     try {
+      // 1. First fetch passengers to notify them (before they are removed/cancelled in DB)
+      final passengersResponse = await SupabaseService.client
+          .from('bookings')
+          .select('passenger_id, users!passenger_id(fcm_token)')
+          .eq('ride_id', rideId)
+          .eq('status', 'confirmed');
+
+      // 2. Perform cancellation in DB
       final response = await SupabaseService.client.rpc('cancel_full_ride', params: {
         'p_ride_id': rideId,
         'p_driver_id': driverId,
@@ -309,6 +317,24 @@ class RideService {
 
       if (response['success'] != true) {
         throw Exception(response['error'] ?? 'Cancellation failed');
+      }
+
+      // 3. Notify passengers
+      final List<String> playerIds = [];
+      for (final booking in (passengersResponse as List)) {
+        final token = booking['users']?['fcm_token'];
+        if (token != null && token.isNotEmpty) {
+          playerIds.add(token);
+        }
+      }
+
+      if (playerIds.isNotEmpty) {
+        await NotificationService.sendPushNotification(
+          playerIds: playerIds,
+          title: 'Ride Cancelled ⚠️',
+          message: 'The ride you booked has been cancelled by the driver. Reason: ${reason ?? 'Not specified'}',
+          additionalData: {'type': 'ride_cancelled'},
+        );
       }
     } catch (e) {
       throw Exception('Failed to cancel ride: $e');
@@ -321,6 +347,7 @@ class RideService {
     required String driverId,
   }) async {
     try {
+      // 1. Update ride status
       await SupabaseService.client
           .from('rides')
           .update({
@@ -329,8 +356,44 @@ class RideService {
           })
           .eq('id', rideId)
           .eq('driver_id', driverId);
+
+      // 2. Notify all confirmed passengers
+      _notifyPassengersRideStarted(rideId);
     } catch (e) {
       throw Exception('Failed to start ride: $e');
+    }
+  }
+
+  static Future<void> _notifyPassengersRideStarted(String rideId) async {
+    try {
+      // Fetch confirmed bookings with passenger tokens
+      final response = await SupabaseService.client
+          .from('bookings')
+          .select('passenger_id, users!passenger_id(fcm_token)')
+          .eq('ride_id', rideId)
+          .eq('status', 'confirmed');
+
+      final List<String> playerIds = [];
+      for (final booking in (response as List)) {
+        final token = booking['users']?['fcm_token'];
+        if (token != null && token.isNotEmpty) {
+          playerIds.add(token);
+        }
+      }
+
+      if (playerIds.isNotEmpty) {
+        await NotificationService.sendPushNotification(
+          playerIds: playerIds,
+          title: 'Ride Started! 🚗',
+          message: 'Your ride is now ongoing. Have a safe journey!',
+          additionalData: {
+            'type': 'ride_started',
+            'ride_id': rideId,
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint('Silent failure of ride start notification: $e');
     }
   }
 

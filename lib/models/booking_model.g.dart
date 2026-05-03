@@ -36,6 +36,8 @@ _$BookingModelImpl _$$BookingModelImplFromJson(Map<String, dynamic> json) =>
       passengerEmail: json['passenger_email'] as String?,
       passengerBio: json['passenger_bio'] as String?,
       passengerPhotoUrl: json['passenger_photo_url'] as String?,
+      driverPhone: json['driver_phone'] as String?,
+      driverPhotoUrl: json['driver_photo_url'] as String?,
     );
 
 Map<String, dynamic> _$$BookingModelImplToJson(_$BookingModelImpl instance) =>
@@ -64,4 +66,6 @@ Map<String, dynamic> _$$BookingModelImplToJson(_$BookingModelImpl instance) =>
       'passenger_email': instance.passengerEmail,
       'passenger_bio': instance.passengerBio,
       'passenger_photo_url': instance.passengerPhotoUrl,
+      'driver_phone': instance.driverPhone,
+      'driver_photo_url': instance.driverPhotoUrl,
     };

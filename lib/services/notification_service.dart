@@ -2,10 +2,54 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import '../core/constants/supabase_constants.dart';
 import 'supabase_service.dart';
 
 class NotificationService {
+  /// Initialize OneSignal
+  static Future<void> initializeOneSignal() async {
+    try {
+      // Set OneSignal app ID
+      OneSignal.initialize(dotenv.env['ONESIGNAL_APP_ID'] ?? "");
+      
+      // Request notification permission
+      await OneSignal.Notifications.requestPermission(true);
+      
+      // Set up notification handlers
+      OneSignal.Notifications.addClickListener((event) {
+        _handleNotificationClick(event);
+      });
+      
+      // Set up foreground notification handler
+      OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+        event.notification.display();
+      });
+      
+      // Get and save player ID
+      final playerId = await OneSignal.User.getOnesignalId();
+      if (playerId != null) {
+        await registerFCMToken(userId: SupabaseService.client.auth.currentUser?.id ?? "", fcmToken: playerId);
+      }
+      
+      debugPrint('OneSignal initialized successfully');
+    } catch (e) {
+      debugPrint('Error initializing OneSignal: $e');
+    }
+  }
+
+  /// Handle notification clicks
+  static void _handleNotificationClick(OSNotificationClickEvent event) {
+    final data = event.notification.additionalData;
+    if (data != null) {
+      final type = data['type'] as String?;
+      debugPrint('Notification clicked: type=$type');
+      
+      // Handle navigation based on notification type
+      // This would integrate with your navigation service
+    }
+  }
+
   /// Send notification to user
   static Future<void> sendNotification({
     required String userId,

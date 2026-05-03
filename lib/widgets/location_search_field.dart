@@ -230,7 +230,7 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
                     final lon = (item['lon'] as num).toDouble();
                     final name = item['display_name'] as String;
 
-                    // ✅ FIX: Just set the coords and name — do NOT auto-open map picker
+                    // Set the coords and name for location selection
                     // User can manually open map picker if they want to refine
                     setState(() {
                       widget.controller.text = name;

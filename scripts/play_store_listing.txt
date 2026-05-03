@@ -1,0 +1,99 @@
+========================================================
+RIDEON PLAY STORE LISTING - Content Ready
+========================================================
+
+--- SHORT DESCRIPTION (80 chars max) ---
+Book rides & share journeys - safe, affordable car pooling across India
+
+--- FULL DESCRIPTION ---
+RideOn - India's Smart Car Pooling App
+
+Kahan jaana hai? RideOn dhoondh leta hai!
+
+Chahe aapko office jaana ho, ghar wapas aana ho, ya kisi doosre shahar ka safar karna ho - RideOn aapko apne raaste mein jaane wale logon ke saath carpool karne deta hai. Sasta, surakshit aur seedha.
+
+--- APP KYA KARTA HAI? ---
+
+ 1. RIDE BOOK KARO
+    • Kahan se kahan jaana hai - bas search karo
+    • Available rides dikhengi apne aap
+    • Ek tap mein seat book karo
+    • Driver se seedha chat karo
+
+ 2. RIDE PUBLISH KARO
+    • Khud carpool banayo
+    • Apna route, time aur price set karo
+    • Passengers ko booking karte dekho
+    • Earning + company - dono!
+
+ 3. REAL-TIME CHAT
+    • Driver aur passenger aapas mein chat kar sakte hain
+    • Pickup point, time sab discuss karo
+    • Bina call kiye hi baat ho jaati hai
+
+ 4. SURAKSHA (SOS)
+    • Emergency mein ek button dabao - SOS alert jaayega
+    • Admin turant dekh lega
+
+ 5. DOCUMENT VERIFICATION
+    • Sab drivers verified hote hain
+    • Driving license aur gaadi papers upload karne padte hain
+    • Admin approve karta hai - phir hi driver banoge
+
+ 6. REVIEWS & RATINGS
+    • Har ride ke baad rating do
+    • Achhe drivers ko upar aate dekho
+
+--- FEATURES ---
+• GPS-based smart search - aapke paas se guzarne wali rides milegi
+• Pro-rata pricing - jitna safar utna paisa, fair deal
+• Bilingual - English aur Hindi
+• Dark Mode - raat ko aankhon par zor nahi
+• Real-time notifications - booking, cancellation, message sab turant pata chale
+• Secure payments - app ke andar hi sab hota hai
+• Admin verified drivers - bharosa ka app
+
+--- ANUJNYA (PERMISSIONS) ---
+RideOn sirf zaroori permissions maangta hai:
+• Location - GPS search aur map ke liye
+• Camera - profile photo aur document upload ke liye
+• Internet - rides dhoondhne aur chat ke liye
+Hum kabhi bhi aapka data bechte nahi.
+
+--- ABHI DOWNLOAD KARO ---
+Safar akela nahi, saath-saath!
+RideOn install karo aur apne agla ride book karo.
+
+--- TAGLINE ---
+Safar. Saath. Save.
+
+========================================================
+SCREENSHOT TEXT SUGGESTIONS (5 screenshots)
+========================================================
+1. Home Screen: "Ride Search Karo - Book Karo"
+2. Search Results: "Raaste Mein Jaane Wale Log Milenge"
+3. Ride Details: "Sab Dekho - Book Karo - Chalo!"
+4. Chat & SOS: "Chat Karo, SOS Bhi Ready"
+5. Profile & Ride Publish: "Khud Bhi Ride Ban Sakte Ho"
+
+--- PRIVACY POLICY URL ---
+https://your-website.com/privacy (Update with actual URL)
+
+--- SUPPORT EMAIL ---
+support@rideon.com (Update with actual email)
+
+--- CATEGORY ---
+Travel & Local
+
+--- CONTACT ---
+Website: https://rideon.com
+Email: support@rideon.com
+
+========================================================
+APP ICON - Recommended
+Use: assets/images/ride_together_icon.png
+Size: 512x512 PNG
+
+FEATURE GRAPHIC - Recommended
+Size: 1024x500 PNG
+Show: RideOn logo + tagline "Ride Together, Save Together"

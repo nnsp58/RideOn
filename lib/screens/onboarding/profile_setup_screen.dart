@@ -17,7 +17,7 @@ class ProfileSetupScreen extends ConsumerStatefulWidget {
 class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
+  final _phoneController = TextEditingController(text: '+91 ');
   File? _imageFile;
   bool _isLoading = false;
 
@@ -29,7 +29,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       final user = ref.read(currentUserProvider).value;
       if (user != null) {
         _nameController.text = user.fullName ?? '';
-        _phoneController.text = user.phone ?? '';
+        if (user.phone != null && user.phone!.isNotEmpty) {
+           _phoneController.text = user.phone!;
+        }
       }
     });
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/gestures.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/validators.dart';
@@ -17,12 +18,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
+  final _phoneController = TextEditingController(text: '+91 ');
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
+  bool _acceptedTerms = false;
 
   @override
   void dispose() {
@@ -36,6 +38,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
+    
+    if (!_acceptedTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please accept the Terms of Service and Privacy Policy to continue.'), backgroundColor: AppColors.error),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -76,6 +85,52 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     }
   }
 
+  void _showTermsDialog(BuildContext context, String title) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Text(
+              title == 'Terms of Service'
+                  ? 'Welcome to CarMate! By using our app, you agree to:\n\n'
+                    '**IMPORTANT LEGAL PROTECTION:**\n'
+                    'I understand that CarMate is strictly a cost-sharing platform, not a commercial taxi service. I am personally responsible for my vehicle\'s insurance, adherence to traffic rules, and the safety of my passengers. CarMate, its parent company, and its founders act solely as an intermediary (aggregator) and bear no legal liability for any incidents, accidents, or disputes that occur during the trip.\n\n'
+                    '1. Be respectful to your co-passengers and drivers.\n'
+                    '2. Ensure your vehicle is safe and insured if you are a driver.\n'
+                    '3. Do not use the app for any illegal activities.\n'
+                    '4. CarMate facilitates cost-sharing for fuel and tolls only. No commercial profit activities allowed.\n'
+                    '5. All rides are private arrangements between drivers and passengers.\n\n'
+                    'By accepting these terms, you acknowledge CarMate\'s status as an intermediary platform under IT Act Section 79.'
+                  : 'CarMate Privacy Policy:\n\n'
+                    '**Data Collection & Purpose:**\n'
+                    '1. We collect your basic profile information (Name, Email, Phone) to facilitate ride matching and communication.\n'
+                    '2. We collect location data during active rides only for safety and route optimization.\n'
+                    '3. Camera access is used exclusively for Driving License (DL) and Vehicle Registration (RC) verification.\n'
+                    '4. Vehicle documents are stored securely for KYC compliance and safety verification.\n\n'
+                    '**Data Usage & Sharing:**\n'
+                    '5. We do not sell your personal data to third parties for marketing purposes.\n'
+                    '6. Personal data will be shared with law enforcement agencies upon valid legal request or court order.\n'
+                    '7. Ride history and user details may be exported for police investigation if required.\n'
+                    '8. Your data is encrypted and stored in secure Supabase servers with regular backups.\n\n'
+                    '**User Rights:**\n'
+                    '9. You have the right to access, modify, or delete your personal data.\n'
+                    '10. You can request data export or account deletion at any time.\n\n'
+                    'By using CarMate, you consent to this privacy policy and data handling practices.'
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,16 +143,20 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 20),
 
-                // Header
+                      // Header
                 Text(
                   AppStrings.createAccount,
                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
@@ -234,31 +293,39 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 Row(
                   children: [
                     Checkbox(
-                      value: true, // TODO: Add state management
+                      value: _acceptedTerms,
                       onChanged: _isLoading ? null : (value) {
-                        // TODO: Handle terms acceptance
+                        setState(() {
+                          _acceptedTerms = value ?? false;
+                        });
                       },
                     ),
                     Expanded(
                       child: RichText(
-                        text: const TextSpan(
+                        text: TextSpan(
                           text: 'I agree to the ',
-                          style: TextStyle(color: AppColors.textSecondary),
+                          style: const TextStyle(color: AppColors.textSecondary),
                           children: [
                             TextSpan(
                               text: 'Terms of Service',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: AppColors.primary,
                                 decoration: TextDecoration.underline,
                               ),
+                              recognizer: TapGestureRecognizer()..onTap = () {
+                                _showTermsDialog(context, 'Terms of Service');
+                              },
                             ),
-                            TextSpan(text: ' and '),
+                            const TextSpan(text: ' and '),
                             TextSpan(
                               text: 'Privacy Policy',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: AppColors.primary,
                                 decoration: TextDecoration.underline,
                               ),
+                              recognizer: TapGestureRecognizer()..onTap = () {
+                                _showTermsDialog(context, 'Privacy Policy');
+                              },
                             ),
                           ],
                         ),
@@ -283,6 +350,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                 ),
 
+                const Spacer(),
                 const SizedBox(height: 24),
 
                 // Login Link
@@ -306,10 +374,90 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
+
+                // Alternative Signup Options
+                const Text(
+                  'Or continue with',
+                  style: TextStyle(color: AppColors.textSecondary),
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 16),
+
+                // Social Signup Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _isLoading ? null : () async {
+                          setState(() => _isLoading = true);
+                          try {
+                            await ref.read(authActionsProvider).signInWithFacebook();
+                          } catch (e) {
+                            if (mounted) {
+                              setState(() => _isLoading = false);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Facebook login failed: $e'), backgroundColor: AppColors.error),
+                              );
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.facebook, color: Colors.blue),
+                        label: const Text('Facebook'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _isLoading ? null : () {
+                          String phone = _phoneController.text.trim().replaceAll(' ', '');
+                          
+                          if (phone.isEmpty || !phone.startsWith('+')) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Please enter a valid phone number with country code (e.g. +91)', style: TextStyle(color: Colors.white)), backgroundColor: AppColors.error),
+                              );
+                              return;
+                          }
+
+                          setState(() => _isLoading = true);
+                          ref.read(authActionsProvider).signInWithOTP(
+                            phone: phone,
+                            onCodeSent: (verificationId) {
+                              if (mounted) {
+                                setState(() => _isLoading = false);
+                                context.go('/otp', extra: phone);
+                              }
+                            },
+                            onError: (error) {
+                              if (mounted) {
+                                setState(() => _isLoading = false);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Verification Failed: $error'), backgroundColor: AppColors.error),
+                                );
+                              }
+                            }
+                          );
+                        },
+                        icon: const Icon(Icons.phone),
+                        label: const Text('Phone'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
+        ),
+      )
+          ]
         ),
       ),
     );

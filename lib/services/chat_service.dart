@@ -1,6 +1,7 @@
 import '../models/message_model.dart';
 import '../core/constants/supabase_constants.dart';
 import 'supabase_service.dart';
+import 'notification_service.dart';
 
 class ChatService {
   /// Get or create a chat between two users for a ride/booking
@@ -64,6 +65,7 @@ class ChatService {
       final currentUserId = SupabaseService.currentUserId;
       if (currentUserId == null) throw Exception('User not authenticated');
 
+      // 1. Save message to database
       await SupabaseService.client
           .from(SupabaseConstants.messagesTable)
           .insert({
@@ -72,7 +74,7 @@ class ChatService {
             'text': text,
           });
 
-      // Update chat's last message
+      // 2. Update chat's last message
       await SupabaseService.client
           .from(SupabaseConstants.chatsTable)
           .update({
@@ -80,8 +82,55 @@ class ChatService {
             'last_message_at': DateTime.now().toIso8601String(),
           })
           .eq('id', chatId);
+
+      // 3. Send Push Notification in background
+      _triggerPushNotification(chatId, currentUserId, text);
     } catch (e) {
       throw Exception('Failed to send message: $e');
+    }
+  }
+
+  static Future<void> _triggerPushNotification(String chatId, String senderId, String text) async {
+    try {
+      // Get chat participants to find recipient
+      final chat = await SupabaseService.client
+          .from(SupabaseConstants.chatsTable)
+          .select('participant_1, participant_2')
+          .eq('id', chatId)
+          .single();
+
+      final recipientId = chat['participant_1'] == senderId ? chat['participant_2'] : chat['participant_1'];
+
+      // Get recipient info (name and token)
+      final recipientData = await SupabaseService.client
+          .from('users')
+          .select('full_name, fcm_token')
+          .eq('id', recipientId)
+          .single();
+
+      // Get sender name
+      final senderData = await SupabaseService.client
+          .from('users')
+          .select('full_name')
+          .eq('id', senderId)
+          .single();
+
+      final senderName = senderData['full_name'] ?? 'Someone';
+      final token = recipientData['fcm_token'];
+
+      if (token != null && token.isNotEmpty) {
+        await NotificationService.sendPushNotification(
+          playerIds: [token],
+          title: senderName,
+          message: text,
+          additionalData: {
+            'type': 'new_message',
+            'chat_id': chatId,
+          },
+        );
+      }
+    } catch (e) {
+      print('Silent failure of notification: $e');
     }
   }
 

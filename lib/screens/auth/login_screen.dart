@@ -17,8 +17,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController(text: '+91 ');
   final _passwordController = TextEditingController();
-  final _phoneController = TextEditingController(); // Added for OTP
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
@@ -88,16 +88,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 40),
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 20),
 
-                // Header
+                      // Header
                 Text(
                   AppStrings.welcomeBack,
                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
@@ -199,6 +203,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
 
+                const Spacer(), // Pushes everything below to the bottom of the screen
                 const SizedBox(height: 24),
 
                 // Sign Up Link
@@ -238,14 +243,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: _isLoading ? null : () {
-                          // TODO: Implement Google login
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Google login coming soon!')),
-                          );
+                        onPressed: _isLoading ? null : () async {
+                          setState(() => _isLoading = true);
+                          try {
+                            await ref.read(authActionsProvider).signInWithFacebook();
+                            // Note: we don't set loading to false here immediately because 
+                            // the browser will open. Loading state will reset when app resumes.
+                          } catch (e) {
+                            if (mounted) {
+                              setState(() => _isLoading = false);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Facebook login failed: $e'), backgroundColor: AppColors.error),
+                              );
+                            }
+                          }
                         },
-                        icon: const Icon(Icons.g_mobiledata),
-                        label: const Text('Google'),
+                        icon: const Icon(Icons.facebook, color: Colors.blue),
+                        label: const Text('Facebook'),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -255,35 +269,61 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: _isLoading ? null : () {
-                          String phone = _phoneController.text.trim();
-                          if (phone.isEmpty && _emailController.text.contains('+')) {
-                              phone = _emailController.text.trim();
-                          }
-                          
-                          if (phone.isEmpty || !phone.startsWith('+')) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please enter a valid phone number with country code (e.g. +91)', style: TextStyle(color: Colors.white)), backgroundColor: AppColors.error),
-                              );
-                              return;
-                          }
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              final dialogPhoneController = TextEditingController(text: '+91 ');
+                              return AlertDialog(
+                                title: const Text('Phone Login'),
+                                content: TextField(
+                                  controller: dialogPhoneController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Phone Number',
+                                    hintText: '+91 9876543210',
+                                  ),
+                                  keyboardType: TextInputType.phone,
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      String phone = dialogPhoneController.text.trim().replaceAll(' ', '');
+                                      
+                                      if (phone.length < 10 || !phone.startsWith('+')) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text('Please enter a valid phone number with country code (e.g. +91)', style: TextStyle(color: Colors.white)), backgroundColor: AppColors.error),
+                                          );
+                                          return;
+                                      }
 
-                          setState(() => _isLoading = true);
-                          ref.read(authActionsProvider).signInWithOTP(
-                            phone: phone,
-                            onCodeSent: (verificationId) {
-                              if (mounted) {
-                                setState(() => _isLoading = false);
-                                context.go('/otp', extra: phone);
-                              }
+                                      setState(() => _isLoading = true);
+                                      ref.read(authActionsProvider).signInWithOTP(
+                                        phone: phone,
+                                        onCodeSent: (verificationId) {
+                                          if (mounted) {
+                                            setState(() => _isLoading = false);
+                                            context.go('/otp', extra: phone);
+                                          }
+                                        },
+                                        onError: (error) {
+                                          if (mounted) {
+                                            setState(() => _isLoading = false);
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('Verification Failed: $error'), backgroundColor: AppColors.error),
+                                            );
+                                          }
+                                        }
+                                      );
+                                    },
+                                    child: const Text('Send OTP'),
+                                  ),
+                                ],
+                              );
                             },
-                            onError: (error) {
-                              if (mounted) {
-                                setState(() => _isLoading = false);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Verification Failed: $error'), backgroundColor: AppColors.error),
-                                );
-                              }
-                            }
                           );
                         },
                         icon: const Icon(Icons.phone),
@@ -295,9 +335,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
+        ),
+      )
+          ]
         ),
       ),
     );

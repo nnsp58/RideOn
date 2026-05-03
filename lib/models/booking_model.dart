@@ -32,6 +32,8 @@ class BookingModel with _$BookingModel {
     String? passengerEmail,
     String? passengerBio,
     String? passengerPhotoUrl,
+    String? driverPhone,
+    String? driverPhotoUrl,
   }) = _BookingModel;
 
   factory BookingModel.fromJson(Map<String, dynamic> json) =>

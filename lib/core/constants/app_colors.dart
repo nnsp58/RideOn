@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary colors
-  static const Color primary = Color(0xFF3700B3);
-  static const Color primaryLight = Color(0xFFEDE7F6);
-  static const Color primaryVariant = Color(0xFF6200EA);
-  static const Color secondary = Color(0xFF03DAC6);
-  static const Color secondaryVariant = Color(0xFF018786);
+  static const Color primary = Color(0xFF2E7D32); // Eco Green
+  static const Color primaryLight = Color(0xFFE8F5E9);
+  static const Color primaryVariant = Color(0xFF1B5E20);
+  static const Color secondary = Color(0xFF81C784);
+  static const Color secondaryVariant = Color(0xFF388E3C);
 
   // Background colors
   static const Color background = Color(0xFFFAFAFA);

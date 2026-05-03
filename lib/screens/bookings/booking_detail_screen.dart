@@ -216,6 +216,14 @@ class _BookingDetailScreenState extends ConsumerState<BookingDetailScreen> {
                   const SizedBox(height: 16),
                   _buildPassengerDetails(booking),
                   const SizedBox(height: 32),
+                ] else ...[
+                  const Text(
+                    'Driver Information',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildDriverDetails(booking),
+                  const SizedBox(height: 32),
                 ],
 
                 // Booking Details Section
@@ -503,6 +511,66 @@ class _BookingDetailScreenState extends ConsumerState<BookingDetailScreen> {
                   Text(booking.passengerEmail!, style: const TextStyle(fontSize: 14)),
                 ],
               ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDriverDetails(BookingModel booking) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundImage: (booking.driverPhotoUrl != null && booking.driverPhotoUrl!.isNotEmpty) 
+                  ? NetworkImage(booking.driverPhotoUrl!) 
+                  : null,
+                child: (booking.driverPhotoUrl == null || booking.driverPhotoUrl!.isEmpty) 
+                  ? const Icon(Icons.person) 
+                  : null,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Driver', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                    Text('Driver ID: ${booking.driverId.substring(0, 8)}...', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  if (booking.driverPhone != null)
+                    IconButton(
+                      icon: const Icon(Icons.phone, color: AppColors.primary),
+                      onPressed: () => _launchCaller(booking.driverPhone!),
+                    ),
+                ],
+              ),
+            ],
+          ),
+          if (booking.driverPhone != null) ...[
+            const Divider(height: 24),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.call, size: 16, color: Colors.grey),
+                  const SizedBox(width: 12),
+                  Text(booking.driverPhone!, style: const TextStyle(fontSize: 14)),
+                ],
+              ),
+            ),
           ],
         ],
       ),

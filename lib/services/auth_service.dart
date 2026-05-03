@@ -6,6 +6,19 @@ import 'supabase_service.dart';
 class AuthService {
   static User? get currentUser => SupabaseService.currentUser;
 
+  /// Sign in with Facebook
+  static Future<void> signInWithFacebook() async {
+    try {
+      await SupabaseService.client.auth.signInWithOAuth(
+        OAuthProvider.facebook,
+        // The redirectTo URL must match your Deep Link configuration in AndroidManifest
+        redirectTo: 'com.rideon.rideon://login-callback',
+      );
+    } catch (e) {
+      throw Exception('Facebook login failed: $e');
+    }
+  }
+
   /// Sign up with email and password
   static Future<AuthResponse> signUpWithEmail({
     required String email,
@@ -207,9 +220,43 @@ class AuthService {
     }
   }
 
-  /// Listen to auth state changes
+  /// Listen to auth state changes and sync OAuth profiles
   static Stream<AuthState> onAuthStateChange() {
-    return SupabaseService.client.auth.onAuthStateChange;
+    final stream = SupabaseService.client.auth.onAuthStateChange;
+    stream.listen((data) async {
+      final AuthChangeEvent event = data.event;
+      final Session? session = data.session;
+
+      // Handle OAuth auto-profile creation
+      if (event == AuthChangeEvent.signedIn && session != null) {
+        try {
+          final user = session.user;
+          // Check if profile exists
+          final profile = await SupabaseService.client
+              .from('users')
+              .select()
+              .eq('id', user.id)
+              .maybeSingle();
+
+          if (profile == null) {
+            // This is likely a new OAuth user, create profile with metadata
+            final name = user.userMetadata?['full_name'] ?? user.userMetadata?['name'];
+            final photoUrl = user.userMetadata?['avatar_url'] ?? user.userMetadata?['picture'];
+            
+            await SupabaseService.client.from('users').insert({
+              'id': user.id,
+              'email': user.email,
+              'full_name': name,
+              'photo_url': photoUrl,
+              'phone': user.phone?.isEmpty == true ? null : user.phone,
+            });
+          }
+        } catch (e) {
+          // Ignore errors here to not break the stream
+        }
+      }
+    });
+    return stream;
   }
 
   /// Get current user profile

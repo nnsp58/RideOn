@@ -45,6 +45,8 @@ mixin _$BookingModel {
   String? get passengerEmail => throw _privateConstructorUsedError;
   String? get passengerBio => throw _privateConstructorUsedError;
   String? get passengerPhotoUrl => throw _privateConstructorUsedError;
+  String? get driverPhone => throw _privateConstructorUsedError;
+  String? get driverPhotoUrl => throw _privateConstructorUsedError;
 
   /// Serializes this BookingModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -86,7 +88,9 @@ abstract class $BookingModelCopyWith<$Res> {
       DateTime? departureDatetime,
       String? passengerEmail,
       String? passengerBio,
-      String? passengerPhotoUrl});
+      String? passengerPhotoUrl,
+      String? driverPhone,
+      String? driverPhotoUrl});
 }
 
 /// @nodoc
@@ -128,6 +132,8 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
     Object? passengerEmail = freezed,
     Object? passengerBio = freezed,
     Object? passengerPhotoUrl = freezed,
+    Object? driverPhone = freezed,
+    Object? driverPhotoUrl = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -226,6 +232,14 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
           ? _value.passengerPhotoUrl
           : passengerPhotoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      driverPhone: freezed == driverPhone
+          ? _value.driverPhone
+          : driverPhone // ignore: cast_nullable_to_non_nullable
+              as String?,
+      driverPhotoUrl: freezed == driverPhotoUrl
+          ? _value.driverPhotoUrl
+          : driverPhotoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -262,7 +276,9 @@ abstract class _$$BookingModelImplCopyWith<$Res>
       DateTime? departureDatetime,
       String? passengerEmail,
       String? passengerBio,
-      String? passengerPhotoUrl});
+      String? passengerPhotoUrl,
+      String? driverPhone,
+      String? driverPhotoUrl});
 }
 
 /// @nodoc
@@ -302,6 +318,8 @@ class __$$BookingModelImplCopyWithImpl<$Res>
     Object? passengerEmail = freezed,
     Object? passengerBio = freezed,
     Object? passengerPhotoUrl = freezed,
+    Object? driverPhone = freezed,
+    Object? driverPhotoUrl = freezed,
   }) {
     return _then(_$BookingModelImpl(
       id: null == id
@@ -400,6 +418,14 @@ class __$$BookingModelImplCopyWithImpl<$Res>
           ? _value.passengerPhotoUrl
           : passengerPhotoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      driverPhone: freezed == driverPhone
+          ? _value.driverPhone
+          : driverPhone // ignore: cast_nullable_to_non_nullable
+              as String?,
+      driverPhotoUrl: freezed == driverPhotoUrl
+          ? _value.driverPhotoUrl
+          : driverPhotoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -431,7 +457,9 @@ class _$BookingModelImpl extends _BookingModel {
       this.departureDatetime,
       this.passengerEmail,
       this.passengerBio,
-      this.passengerPhotoUrl})
+      this.passengerPhotoUrl,
+      this.driverPhone,
+      this.driverPhotoUrl})
       : super._();
 
   factory _$BookingModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -488,10 +516,14 @@ class _$BookingModelImpl extends _BookingModel {
   final String? passengerBio;
   @override
   final String? passengerPhotoUrl;
+  @override
+  final String? driverPhone;
+  @override
+  final String? driverPhotoUrl;
 
   @override
   String toString() {
-    return 'BookingModel(id: $id, rideId: $rideId, passengerId: $passengerId, driverId: $driverId, passengerName: $passengerName, passengerPhone: $passengerPhone, fromLocation: $fromLocation, toLocation: $toLocation, fromLat: $fromLat, fromLng: $fromLng, toLat: $toLat, toLng: $toLng, seatsBooked: $seatsBooked, totalPrice: $totalPrice, status: $status, bookedAt: $bookedAt, cancelledAt: $cancelledAt, cancelReason: $cancelReason, rideFrom: $rideFrom, rideTo: $rideTo, departureDatetime: $departureDatetime, passengerEmail: $passengerEmail, passengerBio: $passengerBio, passengerPhotoUrl: $passengerPhotoUrl)';
+    return 'BookingModel(id: $id, rideId: $rideId, passengerId: $passengerId, driverId: $driverId, passengerName: $passengerName, passengerPhone: $passengerPhone, fromLocation: $fromLocation, toLocation: $toLocation, fromLat: $fromLat, fromLng: $fromLng, toLat: $toLat, toLng: $toLng, seatsBooked: $seatsBooked, totalPrice: $totalPrice, status: $status, bookedAt: $bookedAt, cancelledAt: $cancelledAt, cancelReason: $cancelReason, rideFrom: $rideFrom, rideTo: $rideTo, departureDatetime: $departureDatetime, passengerEmail: $passengerEmail, passengerBio: $passengerBio, passengerPhotoUrl: $passengerPhotoUrl, driverPhone: $driverPhone, driverPhotoUrl: $driverPhotoUrl)';
   }
 
   @override
@@ -538,7 +570,11 @@ class _$BookingModelImpl extends _BookingModel {
             (identical(other.passengerBio, passengerBio) ||
                 other.passengerBio == passengerBio) &&
             (identical(other.passengerPhotoUrl, passengerPhotoUrl) ||
-                other.passengerPhotoUrl == passengerPhotoUrl));
+                other.passengerPhotoUrl == passengerPhotoUrl) &&
+            (identical(other.driverPhone, driverPhone) ||
+                other.driverPhone == driverPhone) &&
+            (identical(other.driverPhotoUrl, driverPhotoUrl) ||
+                other.driverPhotoUrl == driverPhotoUrl));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -568,7 +604,9 @@ class _$BookingModelImpl extends _BookingModel {
         departureDatetime,
         passengerEmail,
         passengerBio,
-        passengerPhotoUrl
+        passengerPhotoUrl,
+        driverPhone,
+        driverPhotoUrl
       ]);
 
   /// Create a copy of BookingModel
@@ -612,7 +650,9 @@ abstract class _BookingModel extends BookingModel {
       final DateTime? departureDatetime,
       final String? passengerEmail,
       final String? passengerBio,
-      final String? passengerPhotoUrl}) = _$BookingModelImpl;
+      final String? passengerPhotoUrl,
+      final String? driverPhone,
+      final String? driverPhotoUrl}) = _$BookingModelImpl;
   const _BookingModel._() : super._();
 
   factory _BookingModel.fromJson(Map<String, dynamic> json) =
@@ -666,6 +706,10 @@ abstract class _BookingModel extends BookingModel {
   String? get passengerBio;
   @override
   String? get passengerPhotoUrl;
+  @override
+  String? get driverPhone;
+  @override
+  String? get driverPhotoUrl;
 
   /// Create a copy of BookingModel
   /// with the given fields replaced by the non-null parameter values.

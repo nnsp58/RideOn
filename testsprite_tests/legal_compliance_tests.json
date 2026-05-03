@@ -1,0 +1,256 @@
+[
+  {
+    "id": "LEGAL001",
+    "title": "Terms & Conditions acceptance during signup",
+    "description": "Verify user must accept legal protection terms before creating account",
+    "category": "Legal Compliance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /signup"
+      },
+      {
+        "type": "action", 
+        "description": "Fill valid user details in signup form"
+      },
+      {
+        "type": "action",
+        "description": "Do NOT check the Terms & Conditions checkbox"
+      },
+      {
+        "type": "action",
+        "description": "Click signup button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message appears: 'Please accept the Terms of Service and Privacy Policy to continue.'"
+      },
+      {
+        "type": "action",
+        "description": "Check the Terms & Conditions checkbox"
+      },
+      {
+        "type": "action",
+        "description": "Click signup button again"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify successful signup and navigation to profile setup"
+      }
+    ]
+  },
+  {
+    "id": "LEGAL002", 
+    "title": "Terms of Service dialog displays legal protection clause",
+    "description": "Verify Terms of Service contains the critical legal protection clause",
+    "category": "Legal Compliance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /signup"
+      },
+      {
+        "type": "action",
+        "description": "Click on 'Terms of Service' link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dialog opens with title 'Terms of Service'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'IMPORTANT LEGAL PROTECTION'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'CarMate is strictly a cost-sharing platform, not a commercial taxi service'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'bear no legal liability for any incidents, accidents, or disputes'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'intermediary (aggregator)'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'IT Act Section 79'"
+      },
+      {
+        "type": "action",
+        "description": "Click 'Close' button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dialog closes and returns to signup screen"
+      }
+    ]
+  },
+  {
+    "id": "LEGAL003",
+    "title": "Privacy Policy dialog displays compliance information",
+    "description": "Verify Privacy Policy contains data protection and law enforcement clauses",
+    "category": "Legal Compliance", 
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /signup"
+      },
+      {
+        "type": "action",
+        "description": "Click on 'Privacy Policy' link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dialog opens with title 'Privacy Policy'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'Data Collection & Purpose'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'location data during active rides only for safety'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'Camera access is used exclusively for Driving License (DL) and Vehicle Registration (RC) verification'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'shared with law enforcement agencies upon valid legal request'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'exported for police investigation if required'"
+      },
+      {
+        "type": "action",
+        "description": "Click 'Close' button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dialog closes and returns to signup screen"
+      }
+    ]
+  },
+  {
+    "id": "LEGAL004",
+    "title": "Cost-sharing policy visibility in app",
+    "description": "Verify cost-sharing policy is clearly stated in Terms of Service",
+    "category": "Legal Compliance",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /signup"
+      },
+      {
+        "type": "action",
+        "description": "Click on 'Terms of Service' link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'CarMate facilitates cost-sharing for fuel and tolls only'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'No commercial profit activities allowed'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text contains: 'private arrangements between drivers and passengers'"
+      }
+    ]
+  },
+  {
+    "id": "LEGAL005",
+    "title": "SOS emergency system functionality",
+    "description": "Verify SOS button triggers emergency alerts to admin",
+    "category": "Legal Compliance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as regular user"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to main screen with SOS button"
+      },
+      {
+        "type": "action",
+        "description": "Long press SOS button for 2 seconds"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify SOS confirmation dialog appears"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dialog shows: 'Emergency alert has been sent to the admin team'"
+      },
+      {
+        "type": "action",
+        "description": "Click 'OK' to close dialog"
+      },
+      {
+        "type": "action",
+        "description": "Login as admin user"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to admin SOS monitoring screen"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify SOS alert appears in admin dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify alert shows user details and location"
+      }
+    ]
+  },
+  {
+    "id": "LEGAL006",
+    "title": "Admin SOS resolution functionality",
+    "description": "Verify admin can resolve SOS alerts and mark as resolved",
+    "category": "Legal Compliance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as admin user"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to admin SOS monitoring screen"
+      },
+      {
+        "type": "action",
+        "description": "Click 'View on Map' button for active SOS alert"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify Google Maps opens with alert location"
+      },
+      {
+        "type": "action",
+        "description": "Return to app and click 'Mark as Resolved' button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify success message: 'SOS Alert resolved.'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify alert is removed from active alerts list"
+      }
+    ]
+  }
+]
